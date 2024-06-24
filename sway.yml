@@ -1,0 +1,145 @@
+---
+
+## ansible-playbook --ask-become-pass -i localhost, -c local <playbookhere> ##
+
+- hosts: all
+  become: true
+  tasks:
+    - name: Update cache
+      ansible.builtin.package:
+        update_cache: yes
+        cache_valid_time: 86400
+
+    - name: Environment&Libraries
+      ansible.builtin.package:
+        name:
+          - curl
+          - build-essential
+          - cmake
+          - cmake-extras
+          - gettext
+          - meson
+          - libcairo2-dev
+          - libpango1.0-dev
+          - ninja-build
+          - libxcb-util-dev
+          - libxkbcommon-dev
+          - bison
+          - libncurses-dev
+          - libelf-dev
+          - libwayland-cursor0
+          - flex
+          - libstartup-notification0-dev
+          - libdrm-common
+          - kanshi
+        state: present
+
+    - name: Install Sway Wayland
+      ansible.builtin.package:
+        name:
+          - sway
+          - waybar
+          - swaylock
+          - swayidle
+          - swayimg
+          - swaybg
+          - wayland-protocols
+          - wayland-utils
+          - wdisplays
+          - wlogout
+          - xdg-desktop-portal-wlr
+          - xdg-desktop-portal-dev
+          - wlr-randr
+          - libwayland-dev
+          - libpcre2-dev
+          - libjson-c-dev
+          - libwlroots-dev
+        state: present
+
+    - name: Install multimedia
+      ansible.builtin.package:
+        name:
+          - mpv
+          - mpv-mpris
+          - pamixer
+          - ffmpeg
+          - ristretto
+          - imv
+          - light
+          - libdrm-amdgpu1
+          - libpng-dev
+          - libavutil-dev
+          - libavcodec-dev
+          - libavformat-dev
+          - pipewire
+          - pulseaudio
+          - pipewire-pulse
+          - pavucontrol
+          - pamixer
+          - wireplumber
+        state: present
+
+    - name: Install tools
+      ansible.builtin.package:
+        name:
+          - dialog
+          - nemo
+          - mtools
+          - tofi
+          - avahi-daemon
+          - ntfs-3g
+          - acpi
+          - acpid
+          - gvfs
+          - upower
+          - network-manager
+          - libnotify-bin
+          - mako-notifier
+          - efibootmgr
+          - cifs-utils
+          - grimshot
+        state: present
+
+    - name: Enable avahi-daemon
+      ansible.builtin.systemd:
+        name: avahi-daemon
+        enabled: yes
+
+    - name: Enable acpid
+      ansible.builtin.systemd:
+        name: acpid
+        enabled: yes
+
+#    - name: Install cups and bluetooth
+#      ansible.builtin.package:
+#        name:
+#          - cups
+#          - system-config-printer
+#          - simple-scan
+#          - bluez
+#          - bluez-tools
+#          - blueman
+
+#    - name: Enable cups
+#      ansible.builtin.systemd:
+#        name: cups
+#        enabled: yes
+
+#    - name: Enable bluetooth
+#      ansible.builtin.systemd:
+#        name: bluetooth
+#        enabled: yes
+
+    - name: Install fonts
+      ansible.builtin.package:
+        name:
+          - fonts-recommended
+          - fonts-font-awesome
+          - fonts-terminus
+        state: present
+
+    - name: Cleaning
+      ansible.builtin.package:
+        autoremove: yes
+        autoclean: yes
+...

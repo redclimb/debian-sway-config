@@ -1,0 +1,80 @@
+---
+
+## ansible-playbook --ask-become-pass -i localhost, -c local <playbookhere> ##
+
+- hosts: all
+  tasks:
+    - name: Apply config
+      ansible.builtin.copy:
+        src: "config/"
+        dest: "{{ lookup('env','HOME')}}/.config/"
+
+    - name: Copy backgrounds
+      ansible.builtin.copy:
+        src: "backgrounds/"
+        dest: "{{ lookup('env','HOME')}}/.local/backgrounds"
+
+    - name: Create Git folder
+      ansible.builtin.file:
+        path: "{{ lookup('env','HOME')}}/Git"
+        state: directory
+
+    - name: Backup bashrc file
+      ansible.builtin.copy:
+        src: "{{ lookup('env','HOME')}}/.bashrc"
+        dest: "{{ lookup('env','HOME')}}/.bashrc.orig"
+
+    - name: Copy bash config file
+      ansible.builtin.copy:
+        src: files/bashrc.ans
+        dest: "{{ lookup('env','HOME')}}/.bashrc"
+
+    - name: Copy fzf_bash config
+      ansible.builtin.copy:
+        src: files/fzf_bash.ans
+        dest: "{{ lookup('env','HOME')}}/.fzf_bash"
+
+
+- hosts: all
+  become: true
+  tasks:
+    - name: Install nwg-look dep & themes
+      ansible.builtin.package:
+        name:
+          - golang
+          - libgtk-3-dev
+          - libcairo2-dev
+          - libglib2.0-bin
+          - zip
+          - yaru-theme-icon
+          - yaru-theme-gtk
+        state: present
+
+    - name: Download nwg-look
+      ansible.builtin.get_url:
+        url: "https://github.com/nwg-piotr/nwg-look/archive/refs/tags/v0.2.7.zip"
+        dest: "{{ lookup('env','HOME')}}/Git/v0.2.7.zip"
+
+    - name: Unzip nwg-look
+      ansible.builtin.unarchive:
+        src: "{{ lookup('env','HOME')}}/Git/v0.2.7.zip"
+        dest: "{{ lookup('env','HOME')}}/Git/"
+        remote_src: yes
+
+    - name: Build nwg-look
+      ansible.builtin.command: make build chdir={{ lookup('env','HOME')}}/Git/nwg-look-0.2.7/
+
+    - name: Install nwg-look
+      become: true
+      ansible.builtin.command: sudo make install chdir={{ lookup('env','HOME')}}/Git/nwg-look-0.2.7/
+
+    - name: Remove nwg-look directory
+      ansible.builtin.file:
+        path: "{{ lookup('env','HOME')}}/Git/nwg-look-0.2.7/"
+        state: absent
+
+    - name: Remove nwg-look zip
+      ansible.builtin.file:
+        path: "{{ lookup('env','HOME')}}/Git/v0.2.7.zip"
+        state: absent
+...

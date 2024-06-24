@@ -1,0 +1,169 @@
+
+---
+
+#######################################################################################
+## 		              Ansible first installation ( Debian )                  ##
+#######################################################################################
+##     ansible-playbook --ask-become-pass -i localhost, -c local <playbookhere>      ##
+
+  - hosts: all
+    tasks:
+      - name: Create dir
+        ansible.builtin.file:
+          path: "{{ lookup('env','HOME')}}/.local/bin"
+          state: directory
+
+#      - name: Install Rust
+#        ansible.builtin.shell:
+#          cmd: "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"
+#        args:
+#          executable: /usr/bin/bash
+
+  - hosts: all
+    become: true
+    tasks:
+      - name: Make sure lsb-release package is installed
+        ansible.builtin.package:
+          name: lsb-release
+
+      - name: Backup Repos
+        ansible.builtin.copy:
+          src: /etc/apt/sources.list
+          dest: /etc/apt/sources.list.orig
+
+      - name: lsb-release
+        shell: lsb_release -c | awk '{print $2}'
+        register: codename
+
+      - name: Add backports repo
+        ansible.builtin.lineinfile:
+          path: /etc/apt/sources.list
+          line: "deb http://ftp.it.debian.org/debian/ {{ codename.stdout }}-backports main contrib non-free non-free-firmware"
+
+      - name: Update cache
+        ansible.builtin.package:
+          update_cache: yes
+
+      - name: Packages Installation
+        ansible.builtin.package:
+          name:
+            ## Container ##	
+            - distrobox
+            - podman
+            - podman-compose
+            ## Utilities ##
+            - dstat
+            - nmap
+            - fzf
+            - btop
+            - vim
+            - mousepad
+            - firefox-esr
+            - atril
+            ## Backup ##
+            - rclone
+            - dar
+            - bat
+          state: latest
+
+      - name: Ask user fo additional packages
+        pause:
+          prompt: "Add more packages to be installed separated by a comma and a space (i.e.:curl, wget), otherwise press enter"
+        register: packages_list
+
+      - name: Install additional packages
+        ansible.builtin.package:
+          name: "{{ item }}"
+          state: present
+        loop: "{{ packages_list.user_input.split(',')}}"
+        when: packages_list.user_input != ""
+
+  #   - name: Install flatpak
+  #     ansible.builtin.package:
+  #       name: flatpak
+  #       state: present
+
+  #   - name: Add Flathub Repo
+  #     ansible.builtin.command: flatpak remote-add --if-not-exists --subset=verified flathub-verified https://flathub.org/repo/flathub.flatpakrepo
+
+      - name: Create systemd-service for a quick system errors overview
+        copy:
+          content: |
+            [Unit]
+            Description=Journalctl on tty8
+
+            [Service]
+            ExecStart=/usr/bin/journalctl -f -p err
+            StandardOutput=tty
+            TTYPath=/dev/tty8
+            Restart=always
+
+            [Install]
+            WantedBy=multi-user.target
+          dest: /etc/systemd/system/journal-tty8.service
+
+      - name: Systemd reload
+        ansible.builtin.systemd:
+          daemon_reload: true
+
+      - name: Make sure the unit is running
+        ansible.builtin.systemd_service:
+          name: journal-tty8
+          state: started
+          enabled: true
+
+      #- name: Install Broot fm dep
+      #  ansible.builtin.package: 
+      #    name:
+      #      - build-essential 
+      #      - libxcb1-dev 
+      #      - libxcb-render0-dev
+      #      - libxcb-shape0-dev
+      #      - libxcb-xfixes0-dev     
+      #    state: present
+
+      #- name: Install Broot fm
+      #  ansible.builtin.get_url: 
+      #    url: https://dystroy.org/broot/download/x86_64-linux/broot
+      #    dest: /tmp/broot
+      #    mode: '0755'
+
+      #- name: move Broot fm
+      #  ansible.builtin.command: mv /tmp/broot /usr/local/bin/broot
+
+      #- name: make Broot fm executable
+      #  ansible.builtin.file:
+      #    path: /usr/local/bin/broot
+      #    mode: '0755'
+
+      - name: Install Superfile FM
+        ansible.builtin.shell: bash -c "$(curl -sLo- https://superfile.netlify.app/install.sh)"
+        args:
+          executable: /usr/bin/bash
+
+      - name: Ask user to remove packages
+        pause:
+          prompt: "Add packages you want to remove separated by a comma and a space (i.e.:curl, wget), otherwise press enter"
+        register: packages_remove_list
+
+      - name: Remove packages
+        ansible.builtin.package:
+          name: "{{ item }}"
+          state: absent
+        loop: "{{ packages_remove_list.user_input.split(',')}}"
+        when: packages_remove_list.user_input != ""
+
+      - name: Cleaning
+        ansible.builtin.package:
+          autoremove: yes
+          autoclean: yes
+
+  - hosts: all
+    tasks:
+      - name: Create bat link
+        ansible.builtin.file:
+          src: "/usr/bin/batcat"
+          dest: "{{ lookup('env','HOME')}}/.local/bin/bat"
+          state: link
+
+...
