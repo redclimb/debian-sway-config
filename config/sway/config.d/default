@@ -1,1 +1,37 @@
+## Config ##
+bindsym Alt+Space exec $menu
+bindsym Shift+Alt+Space exec $drun
+bindsym $mod+e exec swaymsg "workspace 2; exec nemo"
+bindsym $mod+w exec swaymsg "workspace 3; exec firefox-esr"
+bindsym Ctrl+Alt+t exec swaymsg "workspace 1; exec $term"
+for_window [app_id="pavucontrol"] floating enable
+for_window [app_id="mpv"] floating enable, resize set 1000 680
+
+bindsym Alt+l exec swaylock
+
+bindsym $mod+Shift+r reload
+bindsym $mod+Shift+e exec swaynag -t warning -m 'Do you really want to exit sway?' -b 'Yes, exit sway' 'swaymsg exit'
+
+## Wallpaper ##
+output * background ~/.local/backgrounds/blue.jpg fill
+
+## Screenshots ##
+bindsym Print exec grimshot save active ~/Immagini/screenshot_$(date +"%Y-%m-%d_%H:%M:%S").png && notify-send -t 3000 "captured"
+bindsym $mod+Print exec grimshot save area ~/Immagini/screenshot_$(date +"%Y-%m-%d_%H:%M:%S").png && notify-send -t 3000 "area captured"
+
+## Borders ##
+client.focused          #4c7899 #285577 #ffffff #2e9ef4 #a5adcb
+client.focused_inactive #333333 #5f676a #ffffff #484e50 #5f676a
+client.unfocused        #333333 #222222 #888888 #292d2e #222222
+client.urgent           #2f343a #900000 #ffffff #900000 #900000
+client.placeholder      #000000 #0c0c0c #ffffff #000000 #0c0c0c
+client.background       #ffffff
+
+gaps inner 8
+
+default_border pixel 2
+bar { 
+     swaybar_command waybar
+     }
+
 
