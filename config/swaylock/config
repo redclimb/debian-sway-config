@@ -1,1 +1,4 @@
-
+daemonize
+image=~/.local/backgrounds/darkness.jpg
+show-failed-attempts
+show-keyboard-layout
