@@ -17,3 +17,6 @@ just apply my own basic customization
 
 📍 _Please Note: these configurations are intended for the italian keyboard and language. Modify the data accordingly in the sway folder_
 
+![screenshot1](https://github.com/redclimb/debian-sway-config/assets/170079621/d5ad25b4-41ed-4e68-8e7f-30f6d0dcdc28)
+
+![screenshot2](https://github.com/redclimb/debian-sway-config/assets/170079621/41696573-23ff-4bf5-ba4c-29565d82f1f7)
