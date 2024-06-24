@@ -1,1 +1,89 @@
+## Variables ##
+set $mod Mod4
+set $term foot
+set $menu tofi-run | xargs swaymsg exec --
+set $drun tofi-drun | xargs swaymsg exec --
+
+input * {
+	xkb_layout it
+}
+
+bindsym Alt+F4 kill
+
+## Volume/Light ##
+bindsym Shift+F1 exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindsym Shift+F2 exec pactl set-sink-volume @DEFAULT_SINK@ -5%
+bindsym Shift+F3 exec pactl set-sink-volume @DEFAULT_SINK@ +5%
+
+bindsym Shift+F5 exec light -A 5 
+bindsym Shift+F4 exec light -U 5
+
+## Layout stuff ##
+floating_modifier $mod normal
+
+bindsym $mod+r mode "resize"
+mode "resize" {
+    bindsym Left resize shrink width 15px
+    bindsym Up resize grow height 15px
+    bindsym Down resize shrink height 15px
+    bindsym Right resize grow width 15px
+    bindsym Escape mode "default"
+}
+
+bindsym Alt+Escape workspace back_and_forth
+
+# Swap containers
+bindsym $mod+Tab mark --add "swp"; focus mode_toggle; swap container with mark "swp"; unmark "swp"
+bindsym Alt+Tab+Right mark --add "swp"; focus right; swap container with mark "swp"; unmark "swp"
+bindsym Alt+Tab+Down mark --add "swp"; focus down; swap container with mark "swp"; unmark "swp"
+
+# Make the current focus fullscreen
+bindsym $mod+f fullscreen
+
+# Toggle the current focus between tiling and floating mode
+bindsym $mod+Shift+space floating toggle
+
+# Swap focus between the tiling area and the floating area
+bindsym $mod+space focus mode_toggle
+
+## Scratchpad
+bindsym $mod+Shift+minus move scratchpad
+bindsym $mod+minus scratchpad show 
+
+## Handling stuffs ##
+# Focus
+bindsym $mod+Left focus left
+bindsym $mod+Right focus right
+bindsym $mod+Up focus up
+bindsym $mod+Down focus down
+
+# Windows
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Right move right
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Down move down
+
+## Workspaces ##
+bindsym Alt+1 workspace number 1
+bindsym Alt+2 workspace number 2
+bindsym Alt+3 workspace number 3
+bindsym Alt+4 workspace number 4
+bindsym Alt+5 workspace number 5
+bindsym Alt+6 workspace number 6
+ 
+# Move focused container to workspace
+bindsym Alt+Shift+1 move container to workspace number 1
+bindsym Alt+Shift+2 move container to workspace number 2
+bindsym Alt+Shift+3 move container to workspace number 3
+bindsym Alt+Shift+4 move container to workspace number 4
+bindsym Alt+Shift+5 move container to workspace number 5
+bindsym Alt+Shift+6 move container to workspace number 6
+
+# GTK 
+#exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK
+#exec hash dbus-update-activation-environment 2>/dev/null && \ 
+exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
+
+include $HOME/.config/sway/config.d/*
+
 
