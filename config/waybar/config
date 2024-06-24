@@ -1,1 +1,126 @@
 
+{
+    "layer": "top",
+    "position": "top",
+    "height": 27,
+    "spacing": 2,
+
+"modules-left": ["sway/workspaces", "sway/scratchpad"],
+"modules-center": ["clock#date", "clock#time"],
+"modules-right": ["network", "memory", "cpu", "pulseaudio", "backlight", "temperature", "battery", "idle_inhibitor", "custom/power"],
+
+    "battery": {
+        "bat": "BAT0",
+        "interval": 7,
+        "states": {
+            "warning": 30,
+            "critical": 20
+        }, 
+        // Connected to AC
+        "format": "🔌 {capacity}%", 
+        // Not connected 
+        "format-discharging": "{icon} {capacity}%",
+        "format-icons": [ "🪫", "", "", "", "🔋" ], 
+        "tooltip": true
+    },
+
+    "clock#time": {
+        "interval": 1,
+        "format": "{:%H:%M:%S}",
+        "tooltip": false
+    },
+
+    "clock#date": {
+      "interval": 10,
+      "format": "  {:%e %b %Y}",
+      "tooltip-format": "{:%e %B %Y}"
+    },
+
+    "sway/scratchpad": {
+        "format": "{icon} {count}",
+        "show-empty": false,
+        "format-icons": ["", ""],
+        "tooltip": true,
+        "tooltip-format": "{app}: {title}"
+    },
+
+    "cpu": {
+        "interval": 5,
+        "format": "🔳 {usage}% ({load})", 
+        "states": {
+          "warning": 70,
+          "critical": 90
+        }
+    },
+
+    "backlight": {
+        // "device": "acpi_video1",
+        "format": "{icon}&#8239;{percent}%",
+        "format-icons": [ "🔅", "🔆" ],
+        "on-scroll-down": "light -U 5",
+        "on-scroll-up": "light -A 5"
+    },  
+
+    "memory": {
+        "interval": 5,
+        "format": "💾 {}%", 
+        "states": {
+            "warning": 70,
+            "critical": 90
+        }
+    },
+
+    "network": {
+        "interval": 5,
+        "format-wifi": " 🛜 {essid} ({signalStrength}%)", 
+        "format-ethernet": "🌐 {ifname}", 
+        "format-disconnected": "⚠️ Disconnected",
+        "tooltip-format": "{ifname}: {ipaddr}"
+    },
+
+   "idle_inhibitor": {
+        "format": "{icon}",
+        "format-icons": {
+            "activated": " ",
+            "deactivated": " "
+        }
+    },
+
+    "pulseaudio": {
+        //"scroll-step": 1,
+        "format": "{icon}{volume}%",
+        "format-bluetooth": "{icon} {volume}%",
+        "format-muted": "🔇",
+        "format-icons": {
+            "headphones": "🎧",
+            "phone": "📞",
+            "car": "🚘",
+            "default": [ "🔈", "🔉", "🔊" ]
+        },
+        "on-click": "pavucontrol"
+    },
+
+    "temperature": {
+      "critical-threshold": 80,
+      "interval": 10,
+      "format": "{icon} {temperatureC}°C",
+      "format-icons": ["🟢", "🟢", "🟡", "♨️"], 
+      "tooltip": true
+    },
+
+    "custom/power": {
+		"format": " ",
+		"on-click": "swaynag -t warning -m 'Power Menu Options' -b 'Logout' 'swaymsg exit' -b 'Restart' 'shutdown -r now' -b 'Shutdown'  'shutdown -h now' --background=#005566 --button-background=#009999 --button-border=#002b33 --border-bottom=#002b33"
+    },
+
+    "sway/workspaces": {
+        "disable-scroll": true,
+        "all-outputs": false,
+        "format": "{icon}",
+        "format-icons": {
+            "1": "",
+            "2": "",
+	    "3": ""	
+        }
+    },
+}
