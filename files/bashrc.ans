@@ -1,1 +1,48 @@
+############
+# Settings
+############
+HISTCONTROL=ignoreboth
+HISTSIZE=1000
+HISTFILESIZE=3000
+
+#######################
+# Some other settings
+#######################
+shopt -s autocd
+shopt -s cdspell
+shopt -s dirspell
+shopt -s histappend
+shopt -s checkwinsize
+set -C
+
+##########
+# Colors
+##########
+if [ $(id -u) != 0 ]; then
+    PS1='\e[1;35m\u@\h:\e[1;34m\w\e[0m\e[0m$ '
+else
+    PS1='\u@\h:\w\$ '
+fi
+
+#####################
+# Alias definitions
+#####################
+if [ -f /etc/bash_aliases ]; then
+    . /etc/bash_aliases
+fi
+
+######## 
+# Misc
+########
+bind '"↓":"sudo apt update && sudo apt upgrade -y"'
+bind '"¢":"sudo apt autoclean && sudo apt autoremove"'
+
+if [ -f $HOME/.fzf_bash ]; then 
+	. $HOME/.fzf_bash
+fi
+
+########
+# Path
+########
+export PATH="$PATH:$HOME/.local/bin:/sbin:/usr/sbin"
 

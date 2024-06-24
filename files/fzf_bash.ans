@@ -1,0 +1,12 @@
+############
+# Settings
+############
+export FZF_DEAFAULT_COMMAND='fd --hidden --type f'
+export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border --multi'
+
+#########
+# Alias
+#########
+alias v='fzf --preview "bat --color=always --line-range :500 {}"'
+alias e='vim $(fzf)'
+alias f='fzf'
